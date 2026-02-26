@@ -13,6 +13,18 @@ const emptyForm = {
 
 const statusOptions = ['active', 'resolved', 'dismissed', 'forwarded'];
 
+const extractErrorMessage = (error, fallbackMessage) => {
+  const errors = error?.response?.data?.errors;
+  if (errors) {
+    const firstErrorKey = Object.keys(errors)[0];
+    if (firstErrorKey && Array.isArray(errors[firstErrorKey]) && errors[firstErrorKey].length > 0) {
+      return errors[firstErrorKey][0];
+    }
+  }
+
+  return error?.response?.data?.message || fallbackMessage;
+};
+
 const toDateTimeLocal = (value) => {
   if (!value) {
     return '';
@@ -116,6 +128,11 @@ const Blotter = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (String(formData.complainant_id) === String(formData.respondent_id)) {
+      toast.error('Complainant and respondent must be different persons.');
+      return;
+    }
+
     try {
       await axios.post('/blotters', formData);
       setFormData(emptyForm);
@@ -124,7 +141,7 @@ const Blotter = () => {
       fetchBlotters();
     } catch (error) {
       console.error('Failed to create blotter', error);
-      toast.error('Failed to add blotter record.');
+      toast.error(extractErrorMessage(error, 'Failed to add blotter record.'));
     }
   };
 
@@ -144,6 +161,11 @@ const Blotter = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
 
+    if (String(editFormData.complainant_id) === String(editFormData.respondent_id)) {
+      toast.error('Complainant and respondent must be different persons.');
+      return;
+    }
+
     try {
       await axios.put(`/blotters/${editFormData.id}`, {
         complainant_id: editFormData.complainant_id,
@@ -158,7 +180,7 @@ const Blotter = () => {
       fetchBlotters();
     } catch (error) {
       console.error('Failed to update blotter', error);
-      toast.error('Failed to update blotter record.');
+      toast.error(extractErrorMessage(error, 'Failed to update blotter record.'));
     }
   };
 
@@ -271,7 +293,11 @@ const Blotter = () => {
                 <select className="select select-bordered" name="complainant_id" value={formData.complainant_id} onChange={handleFormChange} required>
                   <option value="">Select complainant</option>
                   {constituents.map((constituent) => (
-                    <option key={constituent.id} value={constituent.id}>
+                    <option
+                      key={constituent.id}
+                      value={constituent.id}
+                      disabled={String(formData.complainant_id) === String(constituent.id)}
+                    >
                       {fullName(constituent)}
                     </option>
                   ))}
@@ -284,7 +310,11 @@ const Blotter = () => {
                 <select className="select select-bordered" name="respondent_id" value={formData.respondent_id} onChange={handleFormChange} required>
                   <option value="">Select respondent</option>
                   {constituents.map((constituent) => (
-                    <option key={constituent.id} value={constituent.id}>
+                    <option
+                      key={constituent.id}
+                      value={constituent.id}
+                      disabled={String(formData.respondent_id) === String(constituent.id)}
+                    >
                       {fullName(constituent)}
                     </option>
                   ))}
@@ -334,7 +364,11 @@ const Blotter = () => {
                 <select className="select select-bordered" name="complainant_id" value={editFormData.complainant_id} onChange={handleEditFormChange} required>
                   <option value="">Select complainant</option>
                   {constituents.map((constituent) => (
-                    <option key={constituent.id} value={constituent.id}>
+                    <option
+                      key={constituent.id}
+                      value={constituent.id}
+                      disabled={String(editFormData.complainant_id) === String(constituent.id)}
+                    >
                       {fullName(constituent)}
                     </option>
                   ))}
@@ -347,7 +381,11 @@ const Blotter = () => {
                 <select className="select select-bordered" name="respondent_id" value={editFormData.respondent_id} onChange={handleEditFormChange} required>
                   <option value="">Select respondent</option>
                   {constituents.map((constituent) => (
-                    <option key={constituent.id} value={constituent.id}>
+                    <option
+                      key={constituent.id}
+                      value={constituent.id}
+                      disabled={String(editFormData.respondent_id) === String(constituent.id)}
+                    >
                       {fullName(constituent)}
                     </option>
                   ))}
