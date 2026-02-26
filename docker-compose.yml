@@ -6,6 +6,9 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      args:
+        uid: 1000
+        user: laravel
     container_name: cbmis_app
     restart: unless-stopped
     tty: true
@@ -60,7 +63,7 @@ services:
     restart: unless-stopped
     tty: true
     ports:
-      - "5173:5173"
+      - "5173:80"
     volumes:
       - ./frontend:/app
       - /app/node_modules

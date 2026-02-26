@@ -42,7 +42,7 @@ const Constituents = () => {
   useEffect(() => {
     const fetchConstituents = async () => {
       try {
-        const response = await axios.get('/api/constituents', {
+        const response = await axios.get('/constituents', {
           params: {
             page: pagination.currentPage,
             per_page: pagination.perPage,
@@ -71,7 +71,7 @@ const Constituents = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/api/constituents', formData);
+      const response = await axios.post('/constituents', formData);
       setConstituents([...constituents, response.data]);
       setFormData({
         first_name: '',
@@ -96,7 +96,7 @@ const Constituents = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this constituent?')) {
       try {
-        await axios.delete(`/api/constituents/${id}`);
+        await axios.delete(`/constituents/${id}`);
         setConstituents(constituents.filter((constituent) => constituent.id !== id));
         toast.success('Constituent deleted successfully!');
       } catch (error) {
@@ -108,7 +108,7 @@ const Constituents = () => {
 
   const handleExport = async () => {
     try {
-      const response = await axios.get('/api/constituents', {
+      const response = await axios.get('/constituents', {
         params: {
           per_page: -1, // Fetch all records
           filter: filter,
@@ -135,7 +135,7 @@ const Constituents = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`/api/constituents/${editFormData.id}`, editFormData);
+      const response = await axios.put(`/constituents/${editFormData.id}`, editFormData);
       setConstituents(constituents.map((constituent) => (constituent.id === editFormData.id ? response.data : constituent)));
       document.getElementById('edit_modal').close();
       toast.success('Constituent updated successfully!');

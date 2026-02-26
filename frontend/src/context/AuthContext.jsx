@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      axios.get('/user')
+      axios.get('/user', { withCredentials: true })
         .then(response => setUser(response.data))
         .catch(() => {
           localStorage.removeItem('token');
@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
   }, [token]);
 
   const login = async (email, password) => {
-    const response = await axios.post('api/login', { email, password });
+    const response = await axios.post('/login', { email, password });
     const { token } = response.data;
     localStorage.setItem('token', token);
     setToken(token);

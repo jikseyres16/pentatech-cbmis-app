@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: '/',
+  baseURL: '/cbmis/api/', // Laravel backend
   withCredentials: true,
 });
 

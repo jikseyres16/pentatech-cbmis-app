@@ -10,7 +10,7 @@ const Header = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post('/api/logout');
+      await axios.post('/logout');
       logout();
       navigate('/');
     } catch (error) {
